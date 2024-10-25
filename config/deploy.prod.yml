@@ -51,5 +51,5 @@ env:
 accessories:
   redis:
     image: "redis:alpine"
-    ports:
+    port:
       - 6379:6379
