@@ -28,14 +28,11 @@ jobs:
       if: always()
 
 
-    - name: Remove existing container if it exists
-      id: remove-existing-container
+    - name: Stop and remove existing container
       run: |
-        docker stop redistry-prod-redis || true
-        docker rm redistry-prod-redis || true
-    
-        
- 
+        docker stop d235a218492053f0cb132926ffc7526ef491513fd10a57968eaf414c7b61da76 || true
+        docker rm -f d235a218492053f0cb132926ffc7526ef491513fd10a57968eaf414c7b61da76 || true
+
 
     # Substitute Registry_Server, Web_Server_IP and HOST_NAME values for extra security
     - name: Substitute Registry_Server, Web_Server_IP and HOST_NAME values
