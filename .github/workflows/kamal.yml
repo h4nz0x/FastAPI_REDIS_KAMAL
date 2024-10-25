@@ -20,15 +20,12 @@ jobs:
       id: checkout-code
       uses: actions/checkout@v3
     
-    # - uses: act10ns/slack@v2
-    #   with:
-    #     status: starting
-    #     channel: '#deployments'
-    #     message: Starting Redistry Service Deployment... 
-    #   if: always()
-      
-    - name: List all files in repository (Debug)
-      run: ls -al
+    - uses: act10ns/slack@v2
+      with:
+        status: starting
+        channel: '#deployments'
+        message: Starting Redistry Service Deployment... 
+      if: always()
  
 
     # Substitute Registry_Server, Web_Server_IP and HOST_NAME values for extra security
@@ -122,9 +119,9 @@ jobs:
     - run: kamal setup -c config/deploy.prod.yml
       id: setup-kamal
 
-    # - name: Send Deployment Started Message to Slack
-    #   uses: act10ns/slack@v2
-    #   with:
-    #     status: ${{ job.status }}
-    #     steps: ${{ toJson(steps) }}
-    #   if: always()
+    - name: Send Deployment Started Message to Slack
+      uses: act10ns/slack@v2
+      with:
+        status: ${{ job.status }}
+        steps: ${{ toJson(steps) }}
+      if: always()
