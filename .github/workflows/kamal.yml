@@ -21,7 +21,12 @@ jobs:
         status: starting
         channel: '#deployments'
         message: Starting Redistry Service Deployment... 
-      if: always()    
+      if: always()
+      
+    - name: List all files in repository (Debug)
+      run: ls -R
+ 
+
     # Substitute Registry_Server, Web_Server_IP and HOST_NAME values for extra security
     - name: Substitute Registry_Server, Web_Server_IP and HOST_NAME values
       id: substitute-values
