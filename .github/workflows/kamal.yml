@@ -26,9 +26,9 @@ jobs:
     - name: Substitute Registry_Server, Web_Server_IP and HOST_NAME values
       id: substitute-values
       run: |
-        sed -i "s|REGISTRY_SERVER|${{ secrets.REGISTRY_SERVER }}|g" ./config/deploy.yml
-        sed -i "s|HOST_NAME|${{ secrets.HOST_NAME }}|g" ./config/deploy.yml
-        sed -i "s|WEB_SERVER_IP|${{ secrets.WEB_SERVER_IP }}|g" ./config/deploy.yml
+        sed -i "s|REGISTRY_SERVER|${{ secrets.REGISTRY_SERVER }}|g" ./config/deploy.prod.yml
+        sed -i "s|HOST_NAME|${{ secrets.HOST_NAME }}|g" ./config/deploy.prod.yml
+        sed -i "s|WEB_SERVER_IP|${{ secrets.WEB_SERVER_IP }}|g" ./config/deploy.prod.yml
 
 
     - name: Checkout code
@@ -105,10 +105,10 @@ jobs:
       id: expose-github-runtime
       uses: crazy-max/ghaction-github-runtime@v3
 
-    - run: kamal lock release -c config/deploy.yml
+    - run: kamal lock release -c config/deploy.prod.yml
       id: lock-release
 
-    - run: kamal setup -c config/deploy.yml
+    - run: kamal setup -c config/deploy.prod.yml
       id: setup-kamal
 
     - name: Send Deployment Started Message to Slack
