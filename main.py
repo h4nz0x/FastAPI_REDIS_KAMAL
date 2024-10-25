@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-import aioredis
+from redis.asyncio import Redis
 import os
 
 app = FastAPI()
@@ -12,12 +12,11 @@ redis = None
 @app.on_event("startup")
 async def startup_event():
     global redis
-    redis = await aioredis.create_redis_pool(f"redis://{redis_host}:{redis_port}")
+    redis = Redis(host=redis_host, port=int(redis_port))
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    redis.close()
-    await redis.wait_closed()
+    await redis.close()
 
 @app.get("/")
 async def read_root():
@@ -26,8 +25,6 @@ async def read_root():
     value = await redis.get("mykey", encoding="utf-8")
     return {"message": value}
 
-
-
 @app.get("/redis")
 async def test_redis_connection():
     try:
@@ -35,10 +32,9 @@ async def test_redis_connection():
         if pong:
             return {"status": "Connection to Redis is successful"}
         else:
-            return {"status": "Connection to Redis is failed"}
+            return {"status": "Connection to Redis failed"}
     except Exception as e:
-        return {"status": f"error: str(e)"}
-
+        return {"status": f"error: {str(e)}"}
 
 @app.get("/up")
 async def health_check():
