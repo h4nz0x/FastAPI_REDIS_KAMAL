@@ -1,0 +1,119 @@
+name: Deploy Redistry Service to Production
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+env:
+  AWS_REGION: us-east-1
+  ENV_FILE_S3_PATH: ${{ secrets.S3_ENV_PATH }}
+  ECR_REPOSITORY: redistry-prod
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  deploy-redistry-service:
+    runs-on: ubuntu-latest
+    steps:
+    
+    - uses: act10ns/slack@v2
+      with:
+        status: starting
+        channel: '#deployments'
+        message: Starting Redistry Service Deployment... 
+      if: always()    
+    # Substitute Registry_Server, Web_Server_IP and HOST_NAME values for extra security
+    - name: Substitute Registry_Server, Web_Server_IP and HOST_NAME values
+      id: substitute-values
+      run: |
+        sed -i "s|REGISTRY_SERVER|${{ secrets.REGISTRY_SERVER }}|g" ./config/deploy.yml
+        sed -i "s|HOST_NAME|${{ secrets.HOST_NAME }}|g" ./config/deploy.yml
+        sed -i "s|WEB_SERVER_IP|${{ secrets.WEB_SERVER_IP }}|g" ./config/deploy.yml
+
+
+    - name: Checkout code
+      id: checkout-code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      id: configure-aws-credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.AWS_ARN }}
+        role-session-name: github
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+      
+    - name: Download .env file from S3
+      id: download-env-file
+      run: |
+        aws s3 cp ${{ env.ENV_FILE_S3_PATH }} .env
+
+    - name: Load and mask .env file contents
+      id: load-and-mask-env-file
+      run: |
+        if [ -f .env ]; then
+          while IFS= read -r line || [[ -n "$line" ]]; do
+            if [[ ! "$line" =~ ^# && -n "$line" ]]; then
+              key=$(echo "$line" | cut -d= -f1)
+              value=$(echo "$line" | cut -d= -f2-)
+              echo "::add-mask::$value"
+              echo "$key=$value" >> $GITHUB_ENV
+              echo "Masked and set: $key"
+            fi
+          done < .env
+        else
+          echo ".env file not found"
+          exit 1
+        fi
+
+    - name: Set and mask KAMAL_REGISTRY_PASSWORD
+      id: set-kamal-registry-password
+      run: |
+        KAMAL_REGISTRY_PASSWORD=$(echo '${{ toJson(steps.login-ecr.outputs) }}' | jq -r 'to_entries | .[] | select(.key | startswith("docker_password_")) | .value')
+        echo "::add-mask::$KAMAL_REGISTRY_PASSWORD"
+        echo "KAMAL_REGISTRY_PASSWORD=$KAMAL_REGISTRY_PASSWORD" >> $GITHUB_ENV
+
+    - name: Confirm environment variables are set
+      id: confirm-environment-variables
+      run: |
+        echo "Environment variables from .env file and KAMAL_REGISTRY_PASSWORD have been set and masked"
+
+    - uses: ruby/setup-ruby@v1
+      id: setup-ruby
+      with:
+        ruby-version: 3.3.0
+        bundler-cache: true
+        cache-version: "tools-v1-${{ runner.os }}"
+
+    - run: gem install kamal
+      id: install-kamal
+ 
+    - run: pip install cache
+      id: install-cachetools
+
+    - uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - uses: docker/setup-buildx-action@v3
+
+    - name: Expose GitHub Runtime for cache
+      id: expose-github-runtime
+      uses: crazy-max/ghaction-github-runtime@v3
+
+    - run: kamal lock release -c config/deploy.yml
+      id: lock-release
+
+    - run: kamal setup -c config/deploy.yml
+      id: setup-kamal
+
+    - name: Send Deployment Started Message to Slack
+      uses: act10ns/slack@v2
+      with:
+        status: ${{ job.status }}
+        steps: ${{ toJson(steps) }}
+      if: always()
