@@ -26,6 +26,15 @@ jobs:
         channel: '#deployments'
         message: Starting Redistry Service Deployment... 
       if: always()
+
+
+    - name: Remove existing container if it exists
+      id: remove-existing-container
+      run: |
+        docker stop redistry-prod || true
+        docker rm redistry-prod || true
+    
+        
  
 
     # Substitute Registry_Server, Web_Server_IP and HOST_NAME values for extra security
