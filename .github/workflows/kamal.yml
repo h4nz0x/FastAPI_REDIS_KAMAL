@@ -31,8 +31,8 @@ jobs:
     - name: Remove existing container if it exists
       id: remove-existing-container
       run: |
-        docker stop redistry-prod || true
-        docker rm redistry-prod || true
+        docker stop redistry-prod-redis || true
+        docker rm redistry-prod-redis || true
     
         
  
