@@ -7,13 +7,13 @@ image: redistry-prod
 # Deploy to these servers.
 servers:
   web:
-    - 5.161.176.178
+    - WEB_SERVER_IP
 
 # If using something like Cloudflare, it is recommended to set encryption mode 
 # in Cloudflare's SSL/TLS setting to "Full" to enable end-to-end encryption. 
 proxy: 
   ssl: true
-  host: redistry.crionlabs.com
+  host: HOST_NAME
   forward_headers: true
 
 # Credentials for your image host.
@@ -50,6 +50,6 @@ env:
 
 accessories:
   redis:
-    host: WEB_SERVER_IP
+    host: REDIS_HOST
     image: "redis:alpine"
     port: "127.0.0.1:6379:6379"
