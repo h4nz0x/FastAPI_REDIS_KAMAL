@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-import redis.asyncio  as aioredis
+import aioredis
 import os
 
 app = FastAPI()
@@ -12,7 +12,7 @@ redis = None
 @app.on_event("startup")
 async def startup_event():
     global redis
-    redis = Redis(host=redis_host, port=int(redis_port))
+    redis = aioredis.from_url(f"redis://{redis_host}:{redis_port}")
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -38,7 +38,7 @@ async def test_redis_connection():
 
 @app.get("/up")
 async def health_check():
-    '''
-    Health check endpoint to ensure the container is running
-    '''
+    """
+    Health check endpoint to ensure the container is running.
+    """
     return {"status": "OK"}
