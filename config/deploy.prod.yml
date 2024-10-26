@@ -50,6 +50,6 @@ env:
 
 accessories:
   redis:
+    image: redis:7.0
     host: redistry.crionlabs.com
-    image: "redis:alpine"
     port: "127.0.0.1:6379:6379"
