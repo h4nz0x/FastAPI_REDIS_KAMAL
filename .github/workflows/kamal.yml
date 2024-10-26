@@ -6,7 +6,7 @@ on:
 env:
   AWS_REGION: us-east-1
   ENV_FILE_S3_PATH: ${{ secrets.S3_ENV_PATH }}
-  ECR_REPOSITORY: redistry-prod
+  ECR_REPOSITORY: redistry-prod 
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 permissions:
   contents: read
@@ -20,12 +20,12 @@ jobs:
       id: checkout-code
       uses: actions/checkout@v3
     
-    - uses: act10ns/slack@v2
-      with:
-        status: starting
-        channel: '#deployments'
-        message: Starting Redistry Service Deployment... 
-      if: always()
+    # - uses: act10ns/slack@v2
+    #   with:
+    #     status: starting
+    #     channel: '#deployments'
+    #     message: Starting Redistry Service Deployment... 
+    #   if: always()
 
 
     - name: Stop and remove existing container
@@ -121,13 +121,16 @@ jobs:
 
     - run: kamal lock release -c config/deploy.prod.yml
       id: lock-release
+    
+    - name: List existing containers
+      run: docker ps -a
 
     - run: kamal setup -c config/deploy.prod.yml
       id: setup-kamal
 
-    - name: Send Deployment Started Message to Slack
-      uses: act10ns/slack@v2
-      with:
-        status: ${{ job.status }}
-        steps: ${{ toJson(steps) }}
-      if: always()
+    # - name: Send Deployment Started Message to Slack
+    #   uses: act10ns/slack@v2
+    #   with:
+    #     status: ${{ job.status }}
+    #     steps: ${{ toJson(steps) }}
+    #   if: always()
