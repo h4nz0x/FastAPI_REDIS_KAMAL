@@ -113,6 +113,10 @@ jobs:
       id: expose-github-runtime
       uses: crazy-max/ghaction-github-runtime@v3
 
+
+    - run: kamal accessory reboot redis -c config/deploy.prod.yml
+      id: reboot-redis
+
     - run: kamal lock release -c config/deploy.prod.yml
       id: lock-release
     
