@@ -5,8 +5,13 @@ import os
 app = FastAPI()
 
 # Setup Redis connection
-redis_host = os.getenv("REDIS_HOST", "localhost")
-redis_port = os.getenv("REDIS_PORT", "6379")
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+redis_host = os.environ["REDIS_HOST"]
+redis_port = os.environ["REDIS_PORT"]
 redis = None
 
 @app.on_event("startup")
