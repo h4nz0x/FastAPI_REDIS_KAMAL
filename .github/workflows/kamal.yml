@@ -122,8 +122,9 @@ jobs:
     - run: kamal lock release -c config/deploy.prod.yml
       id: lock-release
     
-    - name: List existing containers
-      run: docker ps -a
+    - name: Check existing container status
+      run: |
+        docker ps -a | grep d235a218492053f0cb132926ffc7526ef491513fd10a57968eaf414c7b61da76 || true
 
     - run: kamal setup -c config/deploy.prod.yml
       id: setup-kamal
