@@ -118,7 +118,7 @@ jobs:
       id: lock-release
 
 
-    - run: kamal accessory remove redis -c config/deploy.prod.yml
+    - run: yes | kamal accessory remove redis -c config/deploy.prod.yml
       id: remove-redis  
     
     - run: kamal setup -c config/deploy.prod.yml
