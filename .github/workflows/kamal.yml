@@ -28,12 +28,6 @@ jobs:
     #   if: always()
 
 
-    - name: Stop and remove existing container
-      run: |
-        docker stop d235a218492053f0cb132926ffc7526ef491513fd10a57968eaf414c7b61da76 || true
-        docker rm -f d235a218492053f0cb132926ffc7526ef491513fd10a57968eaf414c7b61da76 || true
-
-
     # Substitute Registry_Server, Web_Server_IP and HOST_NAME values for extra security
     - name: Substitute Registry_Server, Web_Server_IP and HOST_NAME values
       id: substitute-values
@@ -122,9 +116,10 @@ jobs:
     - run: kamal lock release -c config/deploy.prod.yml
       id: lock-release
     
-    - name: Check existing container status
+    - name: Stop and remove existing container
       run: |
-        docker ps -a | grep d235a218492053f0cb132926ffc7526ef491513fd10a57968eaf414c7b61da76 || true
+        docker stop d235a218492053f0cb132926ffc7526ef491513fd10a57968eaf414c7b61da76 || true
+        docker rm -f d235a218492053f0cb132926ffc7526ef491513fd10a57968eaf414c7b61da76 || true
 
     - run: kamal setup -c config/deploy.prod.yml
       id: setup-kamal
