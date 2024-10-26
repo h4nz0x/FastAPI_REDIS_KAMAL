@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from redis.asyncio import as aioredis
+import redis.asyncio  as aioredis
 import os
 
 app = FastAPI()
