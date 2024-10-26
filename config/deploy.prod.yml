@@ -50,6 +50,6 @@ env:
 
 accessories:
   redis:
-    host: REDIS_HOST
+    host: HOST_NAME
     image: "redis:alpine"
     port: "127.0.0.1:6379:6379"
