@@ -39,7 +39,7 @@ builder:
 sshkit:
   pool_idle_timeout: 300
 
-
+# Environment variables
 env:
   secret:
     - KAMAL_REGISTRY_PASSWORD
