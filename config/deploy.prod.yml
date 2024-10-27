@@ -36,6 +36,7 @@ builder:
   context: "./"
 
 
+# SSHKit configuration
 sshkit:
   pool_idle_timeout: 300
 
