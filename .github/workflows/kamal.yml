@@ -37,6 +37,7 @@ jobs:
           sed -i "s|REGISTRY_SERVER|${{ secrets.REGISTRY_SERVER }}|g" ./config/deploy.prod.yml
           sed -i "s|HOST_NAME|${{ secrets.HOST_NAME }}|g" ./config/deploy.prod.yml
           sed -i "s|WEB_SERVER_IP|${{ secrets.WEB_SERVER_IP }}|g" ./config/deploy.prod.yml
+          sed -i "s|REDIS_HOST_NAME|${{ secrets.HOST_NAME }}|g" ./config/deploy.prod.yml
         else
           echo "Error: config/deploy.prod.yml file not found"
           exit 1

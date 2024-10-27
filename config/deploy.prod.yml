@@ -52,5 +52,5 @@ env:
 accessories:
   redis:
     image: redis:7.0
-    host: redis
+    host: REDIS_HOST_NAME
     port: "127.0.0.1:6379:6379"
