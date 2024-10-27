@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+docker ps -q -a --filter label=service=redistry-prod --filter status=created --filter status=exited --filter status=dead | tail -n +6 | while read container_id; do docker rm -f $container_id || true; done
