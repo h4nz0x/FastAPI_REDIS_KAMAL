@@ -39,20 +39,17 @@ builder:
 sshkit:
   pool_idle_timeout: 300
 
-# Environment variables
-env:
-  secret:
-    - KAMAL_REGISTRY_PASSWORD
-    - REDIS_HOST
-    - REDIS_PORT
+
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 #
 env:
   clear:
     DB_HOST: redistry-prod-db
-  # secret:
-  #   - RAILS_MASTER_KEY
+  secret:
+    - KAMAL_REGISTRY_PASSWORD
+    - REDIS_HOST
+    - REDIS_PORT
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.
