@@ -86,7 +86,7 @@ env:
 #
 accessories:
   db:
-  redis:
+   redis:
     image: redis:latest
     host: HOST_NAME
     port: "127.0.0.1:6379:6379"
