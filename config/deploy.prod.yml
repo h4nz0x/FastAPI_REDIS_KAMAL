@@ -85,8 +85,7 @@ env:
 # Use accessory services (secrets come from .kamal/secrets).
 #
 accessories:
-  db:
-    redis:
+  redis:
     image: redis:7.0
     host: HOST_NAME
     port: "127.0.0.1:6379:6379"
