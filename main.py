@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-redis_host = os.environ["REDIS_HOST"]
-redis_port = os.environ["REDIS_PORT"]
+redis_host = os.environ["127.0.0.1"]
+redis_port = os.environ["6379"]
 redis = None
 
 @app.on_event("startup")
