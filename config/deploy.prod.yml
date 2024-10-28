@@ -24,6 +24,7 @@ registry:
     - KAMAL_REGISTRY_PASSWORD
 
 
+DB_HOST: redistry-prod-db
 
 # Configure builder setup.
 builder:
@@ -50,7 +51,8 @@ env:
 
 
 accessories:
-  redis:
-    image: redis:7.0
-    host: redistry.crionlabs.com
-    port: "127.0.0.1:6379:6379"
+  db:
+    redis:
+      image: redis:latest
+      host: HOST_NAME
+      port: "127.0.0.1:6379:6379"
