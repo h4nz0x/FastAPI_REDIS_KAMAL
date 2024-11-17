@@ -1,13 +1,12 @@
 #!/bin/bash
 
-# List all images with the label `service=redistry-prod`
-docker image ls --filter label=service=redistry-prod --format '{{.ID}} {{.Repository}}:{{.Tag}}' | while read -r image tag; do
-  # Check if the image is tagged as `latest` or used by a running container
-  if [[ "$tag" != *:latest ]] && ! docker container ls -a --format '{{.Image}}' | grep -qw "$tag"; then
-    # If not `latest` and not in use, remove the image
-    echo "Removing unused image: $tag"
-    docker rmi "$tag"
-  else
-    echo "Skipping image in use or tagged as 'latest': $tag"
+docker ps -q -a --filter label=service=redistry-prod --filter status=created --filter status=exited --filter status=dead | \
+tail -n +6 | while read -r container_id; do
+  echo "Attempting to remove container: $container_id"
+  if ! docker rm "$container_id"; then
+    echo "Failed to remove container: $container_id. Retrying..."
+    sleep 5
+    docker rm "$container_id"
   fi
 done
+
